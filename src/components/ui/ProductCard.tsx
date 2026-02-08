@@ -1,7 +1,7 @@
-import React from 'react';
-import { Star, Download, ShoppingCart, Eye, Sparkles, Rocket, Palette, Code2 } from 'lucide-react';
-import type { Product, ProductCategory } from '@/types';
 import { useCartStore, useUIStore } from '@/lib/store';
+import type { Product, ProductCategory } from '@/types';
+import { Code2, Download, Eye, Palette, Rocket, ShoppingCart, Sparkles, Star } from 'lucide-react';
+import React from 'react';
 
 interface ProductCardProps {
   product: Product;
@@ -55,7 +55,10 @@ export const ProductCard: React.FC<ProductCardProps> = ({ product, onViewDetails
   };
 
   return (
-    <div className="group relative bg-zinc-900/50 border border-zinc-800 rounded-xl overflow-hidden hover:border-purple-500/50 transition-all duration-300 hover:shadow-lg hover:shadow-purple-500/10">
+    <div 
+      onClick={() => onViewDetails?.(product)}
+      className="group relative bg-zinc-900/50 border border-zinc-800 rounded-xl overflow-hidden hover:border-purple-500/50 transition-all duration-300 hover:shadow-lg hover:shadow-purple-500/10 cursor-pointer"
+    >
       {/* Image */}
       <div className="relative aspect-[4/3] overflow-hidden">
         <img

@@ -1,16 +1,18 @@
-import React, { useEffect, useState, useMemo } from 'react';
-import { Loader2, Package, Filter } from 'lucide-react';
+import { FilterSidebar } from '@/components/ui/FilterSidebar';
+import { ProductCard } from '@/components/ui/ProductCard';
+import { ProductDetailModal } from '@/components/ui/ProductDetailModal';
+import { useFilterStore } from '@/lib/store';
 import { supabase } from '@/lib/supabase';
 import type { Product } from '@/types';
-import { ProductCard } from '@/components/ui/ProductCard';
-import { FilterSidebar } from '@/components/ui/FilterSidebar';
-import { useFilterStore } from '@/lib/store';
+import { Filter, Loader2, Package } from 'lucide-react';
+import React, { useEffect, useMemo, useState } from 'react';
 
 export const ProductGrid: React.FC = () => {
   const [products, setProducts] = useState<Product[]>([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
   const [sidebarOpen, setSidebarOpen] = useState(false);
+  const [selectedProduct, setSelectedProduct] = useState<Product | null>(null);
   const { filters } = useFilterStore();
 
   useEffect(() => {
@@ -28,8 +30,21 @@ export const ProductGrid: React.FC = () => {
 
       if (error) throw error;
       setProducts(data || []);
-    } catch (err: any) {
-      setError(err.message);
+    } catch (err: unknown) {
+      console.error('Error fetching products:', err);
+      let errorMessage = 'An unexpected error occurred';
+      
+      if (err instanceof Error) {
+        errorMessage = err.message;
+      } else if (typeof err === 'object' && err !== null) {
+        // Safe check for message property
+        const errorObj = err as { message?: unknown };
+        if (typeof errorObj.message === 'string') {
+          errorMessage = errorObj.message;
+        }
+      }
+      
+      setError(errorMessage);
     } finally {
       setLoading(false);
     }
@@ -94,6 +109,8 @@ export const ProductGrid: React.FC = () => {
         result.sort((a, b) => b.rating_average - a.rating_average);
         break;
       case 'popular':
+        result.sort((a, b) => b.downloads_count - a.downloads_count);
+        break;
       default:
         result.sort((a, b) => b.downloads_count - a.downloads_count);
         break;
@@ -101,6 +118,20 @@ export const ProductGrid: React.FC = () => {
 
     return result;
   }, [products, filters]);
+
+  const recommendedProducts = useMemo(() => {
+    if (!selectedProduct) return [];
+    
+    // Filter by same category, exclude current, sort by rating/popularity
+    return products
+      .filter(p => p.category === selectedProduct.category && p.id !== selectedProduct.id)
+      .sort((a, b) => b.rating_average - a.rating_average)
+      .slice(0, 4);
+  }, [selectedProduct, products]);
+
+  const handleProductClick = (product: Product) => {
+    setSelectedProduct(product);
+  };
 
   if (loading) {
     return (
@@ -169,13 +200,26 @@ export const ProductGrid: React.FC = () => {
             ) : (
               <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6">
                 {filteredProducts.map((product) => (
-                  <ProductCard key={product.id} product={product} />
+                  <ProductCard 
+                    key={product.id} 
+                    product={product} 
+                    onViewDetails={handleProductClick}
+                  />
                 ))}
               </div>
             )}
           </div>
         </div>
       </div>
+
+      {/* Product Detail Modal */}
+      <ProductDetailModal
+        isOpen={!!selectedProduct}
+        onClose={() => setSelectedProduct(null)}
+        product={selectedProduct}
+        recommendedProducts={recommendedProducts}
+        onProductClick={handleProductClick}
+      />
     </section>
   );
 };

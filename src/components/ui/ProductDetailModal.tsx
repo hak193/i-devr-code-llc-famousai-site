@@ -1,23 +1,26 @@
-import React from 'react';
-import { 
-  X, 
-  ShoppingCart, 
-  Star, 
-  Download, 
-  Check, 
-  ExternalLink,
-  Rocket,
-  Sparkles,
-  Palette,
-  Code2
-} from 'lucide-react';
-import type { Product, ProductCategory } from '@/types';
 import { useCartStore } from '@/lib/store';
+import type { Product, ProductCategory } from '@/types';
+import {
+    Check,
+    Code2,
+    CreditCard,
+    Download,
+    ExternalLink,
+    Palette,
+    Rocket,
+    Sparkles,
+    Star,
+    X
+} from 'lucide-react';
+import React from 'react';
+import { ProductCard } from './ProductCard';
 
 interface ProductDetailModalProps {
   isOpen: boolean;
   onClose: () => void;
   product: Product | null;
+  recommendedProducts?: Product[];
+  onProductClick?: (product: Product) => void;
 }
 
 const categoryIcons: Record<ProductCategory, React.ReactNode> = {
@@ -37,9 +40,18 @@ const categoryLabels: Record<ProductCategory, string> = {
 export const ProductDetailModal: React.FC<ProductDetailModalProps> = ({
   isOpen,
   onClose,
-  product
+  product,
+  recommendedProducts = [],
+  onProductClick
 }) => {
   const addItem = useCartStore((state) => state.addItem);
+  const scrollRef = React.useRef<HTMLDivElement>(null);
+
+  React.useEffect(() => {
+    if (scrollRef.current && product) {
+      scrollRef.current.scrollTop = 0;
+    }
+  }, [product?.id, isOpen]);
 
   if (!isOpen || !product) return null;
 
@@ -55,6 +67,16 @@ export const ProductDetailModal: React.FC<ProductDetailModalProps> = ({
     onClose();
   };
 
+  const handleCheckout = () => {
+    // In a real app, this would redirect to Stripe Checkout or similar
+    if (product.lemon_squeezy_variant_id) {
+        window.open(`https://store.lemonsqueezy.com/checkout/buy/${product.lemon_squeezy_variant_id}?embed=1`, '_blank');
+    } else {
+        // Fallback or demo behavior
+        alert("Redirecting to secure checkout...");
+    }
+  };
+
   return (
     <div className="fixed inset-0 z-50 flex items-center justify-center p-4">
       {/* Backdrop */}
@@ -64,7 +86,7 @@ export const ProductDetailModal: React.FC<ProductDetailModalProps> = ({
       />
 
       {/* Modal */}
-      <div className="relative w-full max-w-4xl max-h-[90vh] bg-zinc-900 border border-zinc-800 rounded-2xl shadow-2xl overflow-hidden flex flex-col">
+      <div className="relative w-full max-w-5xl max-h-[90vh] bg-zinc-900 border border-zinc-800 rounded-2xl shadow-2xl overflow-hidden flex flex-col">
         {/* Close Button */}
         <button
           onClick={onClose}
@@ -73,10 +95,10 @@ export const ProductDetailModal: React.FC<ProductDetailModalProps> = ({
           <X className="w-5 h-5 text-zinc-400" />
         </button>
 
-        <div className="flex-1 overflow-y-auto">
-          <div className="grid grid-cols-1 lg:grid-cols-2">
+        <div ref={scrollRef} className="flex-1 overflow-y-auto">
+          <div className="grid grid-cols-1 lg:grid-cols-2 gap-0 lg:gap-8">
             {/* Left - Image */}
-            <div className="relative aspect-square lg:aspect-auto">
+            <div className="relative aspect-square lg:aspect-auto lg:h-[500px]">
               <img
                 src={product.image_url || 'https://via.placeholder.com/600'}
                 alt={product.name}
@@ -86,7 +108,7 @@ export const ProductDetailModal: React.FC<ProductDetailModalProps> = ({
             </div>
 
             {/* Right - Details */}
-            <div className="p-6 lg:p-8">
+            <div className="p-6 lg:p-8 lg:pr-12">
               {/* Category Badge */}
               <div className="flex items-center gap-2 mb-4">
                 <span className="flex items-center gap-1.5 px-3 py-1 rounded-full bg-purple-600/20 text-purple-400 text-sm font-medium">
@@ -118,7 +140,7 @@ export const ProductDetailModal: React.FC<ProductDetailModalProps> = ({
               </div>
 
               {/* Description */}
-              <p className="text-zinc-400 mb-6">
+              <p className="text-zinc-400 mb-6 leading-relaxed">
                 {product.long_description || product.description}
               </p>
 
@@ -129,7 +151,7 @@ export const ProductDetailModal: React.FC<ProductDetailModalProps> = ({
                   <ul className="space-y-2">
                     {product.features.map((feature, index) => (
                       <li key={index} className="flex items-center gap-2 text-sm text-zinc-400">
-                        <Check className="w-4 h-4 text-green-500" />
+                        <Check className="w-4 h-4 text-green-500 shrink-0" />
                         {feature}
                       </li>
                     ))}
@@ -185,10 +207,26 @@ export const ProductDetailModal: React.FC<ProductDetailModalProps> = ({
               )}
             </div>
           </div>
+
+          {/* Recommended Products */}
+          {recommendedProducts.length > 0 && (
+            <div className="p-6 lg:p-8 border-t border-zinc-800">
+               <h3 className="text-xl font-bold text-white mb-6">You Might Also Like</h3>
+               <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6">
+                 {recommendedProducts.map((p) => (
+                   <ProductCard 
+                     key={p.id} 
+                     product={p} 
+                     onViewDetails={onProductClick}
+                   />
+                 ))}
+               </div>
+            </div>
+          )}
         </div>
 
         {/* Footer - Price & CTA */}
-        <div className="flex items-center justify-between p-6 border-t border-zinc-800 bg-zinc-900/50">
+        <div className="flex items-center justify-between p-6 border-t border-zinc-800 bg-zinc-900/95 backdrop-blur supports-[backdrop-filter]:bg-zinc-900/50">
           <div>
             <div className="flex items-baseline gap-2">
               <span className="text-3xl font-bold text-white">
@@ -202,13 +240,21 @@ export const ProductDetailModal: React.FC<ProductDetailModalProps> = ({
             </div>
             <p className="text-sm text-zinc-500">One-time purchase</p>
           </div>
-          <button
-            onClick={handleAddToCart}
-            className="flex items-center gap-2 px-8 py-3 bg-gradient-to-r from-purple-600 to-cyan-600 hover:from-purple-500 hover:to-cyan-500 text-white font-semibold rounded-lg transition-all shadow-lg shadow-purple-500/25"
-          >
-            <ShoppingCart className="w-5 h-5" />
-            Add to Cart
-          </button>
+          <div className="flex items-center gap-3">
+            <button
+              onClick={handleAddToCart}
+              className="px-6 py-3 bg-zinc-800 hover:bg-zinc-700 text-white font-medium rounded-lg transition-colors"
+            >
+              Add to Cart
+            </button>
+            <button
+                onClick={handleCheckout}
+                className="flex items-center gap-2 px-8 py-3 bg-gradient-to-r from-purple-600 to-cyan-600 hover:from-purple-500 hover:to-cyan-500 text-white font-semibold rounded-lg transition-all shadow-lg shadow-purple-500/25"
+            >
+                <CreditCard className="w-5 h-5" />
+                Buy Now
+            </button>
+          </div>
         </div>
       </div>
     </div>
