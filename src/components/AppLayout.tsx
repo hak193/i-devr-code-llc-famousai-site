@@ -1,22 +1,23 @@
-import React, { useState } from 'react';
 import { useUIStore } from '@/lib/store';
 import type { Product } from '@/types';
+import React, { useState } from 'react';
 
 // Components
-import { Header } from '@/components/ui/Header';
-import { Footer } from '@/components/ui/Footer';
-import { CartDrawer } from '@/components/ui/CartDrawer';
 import { AuthModal } from '@/components/ui/AuthModal';
-import { PromptPreviewModal } from '@/components/ui/PromptPreviewModal';
+import { CartDrawer } from '@/components/ui/CartDrawer';
+import { Footer } from '@/components/ui/Footer';
+import { Header } from '@/components/ui/Header';
 import { ProductDetailModal } from '@/components/ui/ProductDetailModal';
+import { PromptPreviewModal } from '@/components/ui/PromptPreviewModal';
 
 // Views
-import { HeroSection } from '@/components/store/HeroSection';
+import { DashboardView } from '@/components/dashboard/DashboardView';
 import { CategoryShowcase } from '@/components/store/CategoryShowcase';
 import { FeaturedProducts } from '@/components/store/FeaturedProducts';
+import { HeroSection } from '@/components/store/HeroSection';
 import { ProductGrid } from '@/components/store/ProductGrid';
+import { PromotionalHero } from '@/components/store/PromotionalHero';
 import { WorkbenchView } from '@/components/workbench/WorkbenchView';
-import { DashboardView } from '@/components/dashboard/DashboardView';
 
 const AppLayout: React.FC = () => {
   const [cartOpen, setCartOpen] = useState(false);
@@ -41,6 +42,7 @@ const AppLayout: React.FC = () => {
           <>
             <HeroSection />
             <CategoryShowcase />
+            <PromotionalHero />
             <FeaturedProducts />
             <ProductGrid />
           </>
