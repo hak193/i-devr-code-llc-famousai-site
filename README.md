@@ -1,53 +1,84 @@
 # i-DevR Code LLC - FamousAI Site
 
-A modern, production-ready web application built with **React**, **TypeScript**, **Vite**, and **Tailwind CSS**. This project features a robust UI component library (Shadcn/UI), state management with Zustand, and Supabase integration.
+A modern, production-ready SaaS starter for selling digital products, featuring AI-powered tools, courses, and more. Built with **React**, **TypeScript**, **Vite**, **Tailwind CSS**, and **Supabase**.
 
-## 🚀 Getting Started
+## 🚀 Key Features
+
+*   **🛒 Digital Storefront**: Beautifully designed product grid with sorting, filtering, and live search.
+*   **📦 Product Details**: Modal-based product previews with detailed specs, features, and image carousels.
+*   **🔥 Admin Dashboard**: Manage your products, view revenue analytics, and control your store via `/admin`.
+*   **⚡ Supabase Backend**: Real-time database for products, user authentication, and secure data handling.
+*   **Responsive Design**: Fully responsive UI/UX across desktop, tablet, and mobile devices.
+*   **Modern Stack**: Uses Shadcn/UI components, Lucide icons, and React Query for state management.
+
+---
+
+## 🛠️ Tech Stack
+
+*   **Frontend**: React (Vite), TypeScript
+*   **Styling**: Tailwind CSS, Shadcn/UI
+*   **Backend / Database**: Supabase (PostgreSQL)
+*   **State Management**: Zustand, React Query
+*   **Icons**: Lucide React
+*   **Deployment**: Vercel (Recommended)
+
+---
+
+## 🏁 Getting Started
 
 ### Prerequisites
 
-- Node.js (v18 or higher recommended)
-- npm, yarn, or pnpm
+*   [Node.js](https://nodejs.org/) (v18 or higher recommended)
+*   [Supabase Account](https://supabase.com/) (Free tier works perfectly)
+*   [Vercel Account](https://vercel.com/) (For deployment)
 
-### Installation
+### 1. Installation
 
-1. Clone the repository:
+Clone the repository and install dependencies:
 
-   ```bash
-   git clone https://github.com/hak193/i-devr-code-llc-famousai-site
-   cd i-devr-code-llc-famousai-site
-   ```
+```bash
+git clone https://github.com/hak193/i-devr-code-llc-famousai-site
+cd i-devr-code-llc-famousai-site
+npm install
+```
 
-2. Install dependencies:
+### 2. Configure Environment Variables
 
-   ```bash
-   npm install
-   ```
+Create a `.env` file in the root directory based on `.env.example`:
 
-### Environment Configuration
+```bash
+cp .env.example .env
+```
 
-This project uses environment variables for configuration. You must set these up before running the application.
+Open `.env` and fill in your Supabase credentials:
 
-1. **Local Development**:
+```env
+VITE_SUPABASE_URL=your_supabase_project_url
+VITE_SUPABASE_ANON_KEY=your_supabase_anon_key
+SUPABASE_SERVICE_ROLE_KEY=your_service_role_key_for_seeding_only
+```
 
-   Copy `.env.example` to `.env`:
+> **Note**: `SUPABASE_SERVICE_ROLE_KEY` is only needed locally to run the seeding script. **Never expose this key in your frontend code or public repository.**
 
-   ```bash
-   cp .env.example .env
-   ```
+### 3. Database Setup (Crucial!)
 
-2. **Update `.env`**:
+1.  Log in to your [Supabase Dashboard](https://supabase.com/dashboard).
+2.  Go to the **SQL Editor**.
+3.  Copy the contents of `schema.sql` from this project.
+4.  Paste it into the SQL Editor and click **Run**.
+    *   This creates the necessary tables (`products`, etc.) and Row Level Security (RLS) policies.
 
-   Fill in your specific values.
+### 4. Seed Initial Data
 
-   ```env
-   VITE_SUPABASE_URL=your_supabase_url
-   VITE_SUPABASE_ANON_KEY=your_supabase_anon_key
-   ```
+Populate your database with sample products using the included script:
 
-   > **Security Note**: Never commit your `.env` file to version control. It is already included in `.gitignore`.
+```bash
+node scripts/seed-products.js
+```
 
-### Running Locally
+This will create a mix of SaaS Starters, Prompts, and UI Kits in your `products` table.
+
+### 5. Running Locally
 
 Start the development server:
 
@@ -55,100 +86,59 @@ Start the development server:
 npm run dev
 ```
 
-Access the app at `http://localhost:5173`.
+Visit `http://localhost:5173` to view the app.
 
 ---
 
-## 🛠️ Production Launch Guide
+## 🚀 Deployment Guide (Vercel)
 
-To prepare this application for a production environment, follow these steps.
+We recommend Vercel for the easiest deployment experience.
 
-### 1. Build for Production
+### Step 1: Push to GitHub
 
-Run the build command to generate static assets:
+Ensure your code is pushed to your GitHub repository.
 
-```bash
-npm run build
-```
+### Step 2: Import Project in Vercel
 
-This will create a `dist` directory containing:
+1.  Log in to [Vercel](https://vercel.com/).
+2.  Click **Add New...** > **Project**.
+3.  Select your GitHub repository (`i-devr-code-llc-famousai-site`).
+4.  Vercel will detect `Vite` automatically.
 
-- Minified HTML/CSS/JS
-- Optimized assets
-- Hashed filenames for cache busting
+### Step 3: Configure Build Settings
 
-### 2. Preview Production Build
+*   **Framework Preset**: Vite
+*   **Root Directory**: `./` (default)
+*   **Build Command**: `npm run build`
+*   **Output Directory**: `dist`
 
-Before deploying, strictly test the production build locally:
+### Step 4: Add Environment Variables (IMPORTANT!)
 
-```bash
-npm run preview
-```
+In the "Environment Variables" section of the Vercel project settings, add the following keys from your Supabase project:
 
-This serves the contents of the `dist` folder, allowing you to catch any build-specific issues (e.g., missing assets, strict mode behaviors).
+*   `VITE_SUPABASE_URL`
+*   `VITE_SUPABASE_ANON_KEY`
 
-### 3. Environment Variables in Production
+> You do **NOT** need the service role key here.
 
-When deploying to a hosting provider (Vercel, Netlify, AWS, etc.), you **MUST** set the environment variables in their dashboard/configuration settings. Do not rely on the `.env` file for production.
+### Step 5: Deploy
 
-**Required Variables:**
-
-- `VITE_SUPABASE_URL`
-- `VITE_SUPABASE_ANON_KEY`
-
-### 4. Deployment
-
-#### Option A: Vercel (Recommended)
-
-1. Push your code to a Git provider (GitHub, GitLab, Bitbucket).
-2. Import the project in Vercel.
-3. Vercel will auto-detect Vite.
-4. **Important**: Add the Environment Variables in the "Settings" step before deploying.
-5. Click **Deploy**.
-
-#### Option B: Netlify
-
-1. Connect your repository to Netlify.
-2. Build command: `npm run build`
-3. Publish directory: `dist`
-4. Add Environment Variables in "Site Settings" > "Build & Deploy" > "Environment".
-
-#### Option C: Traditional Web Server (Nginx/Apache)
-
-1. Run `npm run build`.
-2. Upload the contents of the `dist` folder to your server's public web root.
-3. **SPA Configuration**: Ensure all requests allow client-side routing.
-   - **Nginx Example**:
-
-     ```nginx
-     location / {
-       try_files $uri $uri/ /index.html;
-     }
-     ```
-
-### 5. Quality & Performance Checklist
-
-- **Linting**: Ensure code quality by running `npm run lint`.
-- **SEO**: Verify `index.html` meta tags (Title, Description, OG tags) are accurate for the live site.
-- **Assets**: Ensure images are optimized (WebP format recommended).
-- **Security Control**:
-  - Restrict Supabase Row Level Security (RLS) policies to allow only necessary access.
-  - Enable Postgres RLS immediately if not already done.
+Click **Deploy**. Vercel will build your site and deploy it to a `.vercel.app` domain.
 
 ---
 
-## 📂 Project Structure
+## 🛡️ Admin Dashboard
 
-```text
-src/
-├── components/     # Reusable UI components (Shadcn/UI, etc.)
-├── hooks/          # Custom React hooks
-├── lib/            # Utilities and library configurations (e.g., supabase.ts)
-├── pages/          # Route page components
-├── styles/         # Global styles
-├── App.tsx         # Main application component
-└── main.tsx        # Entry point
-```
+This project includes a secured Admin Dashboard for store management.
+
+1.  Navigate to `/admin` (e.g., `https://your-site.vercel.app/admin`).
+2.  From here, you can:
+    *   View key metrics (Revenue, Orders, Users).
+    *   See a list of all products.
+    *   **Toggle Publish Status**: Instantly show/hide products from the store.
+    *   Search and filter products.
+
+---
 
 ## 📄 License
 

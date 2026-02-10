@@ -3,17 +3,17 @@ import { Header } from '@/components/ui/Header';
 import { supabase } from '@/lib/supabase';
 import type { Product } from '@/types';
 import {
-    CheckCircle,
-    DollarSign,
-    Edit,
-    Filter,
-    Package,
-    Plus,
-    Search,
-    Trash2,
-    TrendingUp,
-    Users,
-    XCircle
+  CheckCircle,
+  DollarSign,
+  Edit,
+  Filter,
+  Package,
+  Plus,
+  Search,
+  Trash2,
+  TrendingUp,
+  Users,
+  XCircle
 } from 'lucide-react';
 import React, { useEffect, useState } from 'react';
 
@@ -129,7 +129,7 @@ export const AdminDashboard: React.FC = () => {
                   className="pl-9 pr-4 py-2 bg-zinc-800 border border-zinc-700 rounded-lg text-sm text-white focus:outline-none focus:border-purple-500 w-full sm:w-64"
                 />
               </div>
-              <button className="p-2 border border-zinc-700 rounded-lg hover:bg-zinc-800 text-zinc-400 hover:text-white">
+              <button className="p-2 border border-zinc-700 rounded-lg hover:bg-zinc-800 text-zinc-400 hover:text-white" title="Filter products" aria-label="Filter products">
                 <Filter className="w-4 h-4" />
               </button>
             </div>
@@ -210,10 +210,18 @@ export const AdminDashboard: React.FC = () => {
                       </td>
                       <td className="p-4 text-right">
                         <div className="flex items-center justify-end gap-2 opacity-0 group-hover:opacity-100 transition-opacity">
-                          <button className="p-2 text-zinc-400 hover:text-white hover:bg-zinc-800 rounded-lg transition-colors">
+                          <button 
+                            className="p-2 text-zinc-400 hover:text-white hover:bg-zinc-800 rounded-lg transition-colors"
+                            title="Edit product"
+                            aria-label="Edit product"
+                          >
                             <Edit className="w-4 h-4" />
                           </button>
-                          <button className="p-2 text-red-400 hover:text-red-300 hover:bg-red-500/10 rounded-lg transition-colors">
+                          <button 
+                            className="p-2 text-red-400 hover:text-red-300 hover:bg-red-500/10 rounded-lg transition-colors"
+                            title="Delete product"
+                            aria-label="Delete product"
+                          >
                             <Trash2 className="w-4 h-4" />
                           </button>
                         </div>

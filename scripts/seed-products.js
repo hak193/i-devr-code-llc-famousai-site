@@ -1,12 +1,13 @@
-
+// @ts-check
 import { createClient } from '@supabase/supabase-js';
+import 'dotenv/config';
 
 // Constants from .env
-const SUPABASE_URL = process.env.VITE_SUPABASE_URL || 'https://lurugkublnupmqdftzxd.supabase.co';
-const SUPABASE_SERVICE_ROLE_KEY = process.env.SUPABASE_SERVICE_ROLE_KEY || 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6Imx1cnVna3VibG51cG1xZGZ0enhkIiwicm9sZSI6InNlcnZpY2Vfcm9sZSIsImlhdCI6MTc3MDQ5NDE3MSwiZXhwIjoyMDg2MDcwMTcxfQ.qB2N_CKGEo74nK8deBV8wf_81oLh2pJKvSlo_G3faaE';
+const SUPABASE_URL = process.env.VITE_SUPABASE_URL;
+const SUPABASE_SERVICE_ROLE_KEY = process.env.SUPABASE_SERVICE_ROLE_KEY;
 
 if (!SUPABASE_URL || !SUPABASE_SERVICE_ROLE_KEY) {
-  console.error('Error: Please provide SUPABASE_URL and SUPABASE_SERVICE_ROLE_KEY environment variables.');
+  console.error('Error: Please provide VITE_SUPABASE_URL and SUPABASE_SERVICE_ROLE_KEY environment variables.');
   process.exit(1);
 }
 
