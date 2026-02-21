@@ -1,4 +1,6 @@
-import { useCartStore, useUIStore } from '@/lib/store';
+import { useToast } from '@/hooks/use-toast';
+import { useCartStore } from '@/lib/cart-store';
+import { useUIStore } from '@/lib/store';
 import type { Product, ProductCategory } from '@/types';
 import { Code2, Download, Eye, Palette, Rocket, ShoppingCart, Sparkles, Star } from 'lucide-react';
 import React from 'react';
@@ -30,8 +32,9 @@ const categoryLabels: Record<ProductCategory, string> = {
 };
 
 export const ProductCard: React.FC<ProductCardProps> = ({ product, onViewDetails }) => {
-  const addItem = useCartStore((state) => state.addItem);
+  const { addItem, openCart } = useCartStore();
   const openModal = useUIStore((state) => state.openModal);
+  const { toast } = useToast();
 
   const formatPrice = (cents: number) => {
     return new Intl.NumberFormat('en-US', {
@@ -43,6 +46,10 @@ export const ProductCard: React.FC<ProductCardProps> = ({ product, onViewDetails
   const handleAddToCart = (e: React.MouseEvent) => {
     e.stopPropagation();
     addItem(product);
+    toast({
+      title: 'Added to cart',
+      description: `${product.name} has been added to your cart.`,
+    });
   };
 
   const handlePreview = (e: React.MouseEvent) => {

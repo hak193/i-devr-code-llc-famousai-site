@@ -1,8 +1,8 @@
-import React, { useState } from 'react';
-import { X, Play, Loader2, Copy, ShoppingCart, Sparkles } from 'lucide-react';
+import { useCartStore } from '@/lib/store';
 import { supabase } from '@/lib/supabase';
 import type { Product } from '@/types';
-import { useCartStore } from '@/lib/store';
+import { Copy, Loader2, Play, ShoppingCart, Sparkles, X } from 'lucide-react';
+import React, { useState } from 'react';
 
 interface PromptPreviewModalProps {
   isOpen: boolean;
@@ -71,8 +71,8 @@ export const PromptPreviewModal: React.FC<PromptPreviewModalProps> = ({
       } else {
         setOutput(`Error: ${data.error}`);
       }
-    } catch (err: any) {
-      setOutput(`Error: ${err.message || 'Failed to run prompt'}`);
+    } catch (err: unknown) {
+      setOutput(`Error: ${err instanceof Error ? err.message : 'Failed to run prompt'}`);
     } finally {
       setIsRunning(false);
     }
@@ -114,6 +114,8 @@ export const PromptPreviewModal: React.FC<PromptPreviewModalProps> = ({
           <button
             onClick={onClose}
             className="p-2 hover:bg-zinc-800 rounded-lg transition-colors"
+            title="Close"
+            aria-label="Close"
           >
             <X className="w-5 h-5 text-zinc-400" />
           </button>

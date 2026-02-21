@@ -1,16 +1,16 @@
 import { useCartStore } from '@/lib/store';
 import type { Product, ProductCategory } from '@/types';
 import {
-    Check,
-    Code2,
-    CreditCard,
-    Download,
-    ExternalLink,
-    Palette,
-    Rocket,
-    Sparkles,
-    Star,
-    X
+  Check,
+  Code2,
+  CreditCard,
+  Download,
+  ExternalLink,
+  Palette,
+  Rocket,
+  Sparkles,
+  Star,
+  X
 } from 'lucide-react';
 import React from 'react';
 import { ProductCard } from './ProductCard';
@@ -51,7 +51,7 @@ export const ProductDetailModal: React.FC<ProductDetailModalProps> = ({
     if (scrollRef.current && product) {
       scrollRef.current.scrollTop = 0;
     }
-  }, [product?.id, isOpen]);
+  }, [product, isOpen]);
 
   if (!isOpen || !product) return null;
 
@@ -91,6 +91,7 @@ export const ProductDetailModal: React.FC<ProductDetailModalProps> = ({
         <button
           onClick={onClose}
           className="absolute top-4 right-4 z-10 p-2 bg-zinc-800/80 hover:bg-zinc-700 rounded-lg transition-colors"
+          aria-label="Close modal"
         >
           <X className="w-5 h-5 text-zinc-400" />
         </button>

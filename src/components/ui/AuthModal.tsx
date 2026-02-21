@@ -1,6 +1,6 @@
-import React, { useState } from 'react';
-import { X, Github, Mail, Lock, User, ArrowRight, Loader2 } from 'lucide-react';
 import { supabase } from '@/lib/supabase';
+import { ArrowRight, Github, Loader2, Lock, Mail, User, X } from 'lucide-react';
+import React, { useState } from 'react';
 
 interface AuthModalProps {
   isOpen: boolean;
@@ -43,8 +43,8 @@ export const AuthModal: React.FC<AuthModalProps> = ({ isOpen, onClose }) => {
         if (error) throw error;
         onClose();
       }
-    } catch (err: any) {
-      setError(err.message || 'An error occurred');
+    } catch (err: unknown) {
+      setError(err instanceof Error ? err.message : 'An error occurred');
     } finally {
       setLoading(false);
     }
@@ -62,8 +62,8 @@ export const AuthModal: React.FC<AuthModalProps> = ({ isOpen, onClose }) => {
         }
       });
       if (error) throw error;
-    } catch (err: any) {
-      setError(err.message || 'An error occurred');
+    } catch (err: unknown) {
+      setError(err instanceof Error ? err.message : 'An error occurred');
       setLoading(false);
     }
   };

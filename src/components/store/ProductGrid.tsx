@@ -36,6 +36,15 @@ export const ProductGrid: React.FC = () => {
       
       if (err instanceof Error) {
         errorMessage = err.message;
+        
+        // Provide specific guidance for common errors
+        if (errorMessage.includes('Failed to fetch') || errorMessage.includes('NetworkError')) {
+          errorMessage = `Network Error: Unable to connect to Supabase.\n\nPossible causes:\n• Your Supabase project might be paused (free tier pauses after 7 days of inactivity)\n• Network connectivity issues\n• CORS configuration problems\n\n👉 Check your Supabase dashboard: https://supabase.com/dashboard\n👉 Click "Restore" if your project is paused`;
+        } else if (errorMessage.includes('CORS')) {
+          errorMessage = `CORS Error: Cross-origin request blocked.\n\n👉 Check your Supabase project settings\n👉 Ensure your domain is allowed in API settings`;
+        } else if (errorMessage.includes('Missing Supabase')) {
+          errorMessage = `Configuration Error: ${errorMessage}\n\n👉 Ensure .env file exists with VITE_SUPABASE_URL and VITE_SUPABASE_ANON_KEY\n👉 Restart dev server: npm run dev`;
+        }
       } else if (typeof err === 'object' && err !== null) {
         // Safe check for message property
         const errorObj = err as { message?: unknown };
@@ -143,13 +152,15 @@ export const ProductGrid: React.FC = () => {
 
   if (error) {
     return (
-      <div className="flex flex-col items-center justify-center py-20 text-center">
+      <div className="flex flex-col items-center justify-center py-20 text-center max-w-2xl mx-auto px-4">
         <Package className="w-16 h-16 text-zinc-700 mb-4" />
-        <p className="text-zinc-400 mb-2">Failed to load products</p>
-        <p className="text-zinc-500 text-sm">{error}</p>
+        <p className="text-zinc-400 mb-4 text-lg font-semibold">Failed to load products</p>
+        <div className="text-zinc-500 text-sm whitespace-pre-line text-left bg-zinc-900 border border-zinc-800 rounded-lg p-4 mb-4 max-w-xl">
+          {error}
+        </div>
         <button
           onClick={fetchProducts}
-          className="mt-4 px-4 py-2 bg-purple-600 hover:bg-purple-500 text-white rounded-lg transition-colors"
+          className="px-4 py-2 bg-purple-600 hover:bg-purple-500 text-white rounded-lg transition-colors"
         >
           Try Again
         </button>

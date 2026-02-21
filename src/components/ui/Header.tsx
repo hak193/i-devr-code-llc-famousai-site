@@ -1,29 +1,30 @@
-import React, { useState } from 'react';
-import { 
-  Search, 
-  ShoppingCart, 
-  Menu, 
-  X, 
-  Terminal, 
-  Store, 
-  LayoutDashboard,
-  User,
-  LogIn,
-  Sparkles
+import { useCartStore } from '@/lib/cart-store';
+import { useFilterStore, useUIStore } from '@/lib/store';
+import {
+    LayoutDashboard,
+    LogIn,
+    Menu,
+    Search,
+    ShoppingCart,
+    Sparkles,
+    Store,
+    Terminal,
+    X
 } from 'lucide-react';
-import { useCartStore, useUIStore, useFilterStore } from '@/lib/store';
+import React, { useState } from 'react';
 
 interface HeaderProps {
-  onOpenCart: () => void;
   onOpenAuth: () => void;
 }
 
-export const Header: React.FC<HeaderProps> = ({ onOpenCart, onOpenAuth }) => {
+export const Header: React.FC<HeaderProps> = ({ onOpenAuth }) => {
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
   const [searchFocused, setSearchFocused] = useState(false);
-  const itemCount = useCartStore((state) => state.getItemCount());
+  const { getTotalItems, openCart } = useCartStore();
   const { activeView, setActiveView } = useUIStore();
   const { filters, setFilters } = useFilterStore();
+  
+  const itemCount = getTotalItems();
 
   const navItems = [
     { id: 'store', label: 'Store', icon: Store },
@@ -87,7 +88,7 @@ export const Header: React.FC<HeaderProps> = ({ onOpenCart, onOpenAuth }) => {
           <div className="flex items-center gap-2">
             {/* Cart Button */}
             <button
-              onClick={onOpenCart}
+              onClick={openCart}
               className="relative p-2 rounded-lg text-zinc-400 hover:text-white hover:bg-zinc-800 transition-colors"
             >
               <ShoppingCart className="w-5 h-5" />

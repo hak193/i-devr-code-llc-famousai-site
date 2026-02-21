@@ -1,10 +1,12 @@
 
 import { ThemeProvider } from "@/components/theme-provider";
+import { CartModal } from "@/components/ui/CartModal";
 import { Toaster as Sonner } from "@/components/ui/sonner";
 import { Toaster } from "@/components/ui/toaster";
 import { TooltipProvider } from "@/components/ui/tooltip";
 import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
 import { BrowserRouter, Route, Routes } from "react-router-dom";
+import Checkout from "./pages/Checkout";
 import Index from "./pages/Index";
 import NotFound from "./pages/NotFound";
 
@@ -18,9 +20,11 @@ const App = () => (
       <TooltipProvider>
         <Toaster />
         <Sonner />
+        <CartModal />
         <BrowserRouter>
           <Routes>
             <Route path="/" element={<Index />} />
+            <Route path="/checkout" element={<Checkout />} />
             <Route path="/admin" element={<AdminDashboard />} />
             <Route path="*" element={<NotFound />} />
           </Routes>

@@ -1,16 +1,14 @@
-import React, { useState, useCallback, useRef, useEffect } from 'react';
-import { 
-  Play, 
-  Save, 
-  Copy, 
-  Loader2, 
-  Variable, 
-  Plus,
-  Trash2,
-  ChevronDown
-} from 'lucide-react';
-import { supabase } from '@/lib/supabase';
 import { useEditorStore } from '@/lib/store';
+import { supabase } from '@/lib/supabase';
+import {
+    Copy,
+    Loader2,
+    Play,
+    Plus,
+    Save,
+    Variable
+} from 'lucide-react';
+import React, { useCallback, useEffect, useRef, useState } from 'react';
 
 interface VariableItem {
   id: string;
@@ -140,8 +138,8 @@ export const PromptEditor: React.FC<PromptEditorProps> = ({ initialContent = '',
       } else {
         setOutput(`Error: ${data.error}`);
       }
-    } catch (err: any) {
-      setOutput(`Error: ${err.message || 'Failed to run prompt'}`);
+    } catch (err: unknown) {
+      setOutput(`Error: ${err instanceof Error ? err.message : 'Failed to run prompt'}`);
     } finally {
       setIsRunning(false);
     }
@@ -304,6 +302,8 @@ export const PromptEditor: React.FC<PromptEditorProps> = ({ initialContent = '',
               <button
                 onClick={() => navigator.clipboard.writeText(output)}
                 className="p-1.5 hover:bg-zinc-700 rounded transition-colors"
+                title="Copy output"
+                aria-label="Copy output"
               >
                 <Copy className="w-4 h-4 text-zinc-400" />
               </button>
