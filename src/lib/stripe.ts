@@ -1,5 +1,6 @@
 import type { CartItem } from '@/types';
-import { loadStripe, Stripe, StripeError } from '@stripe/stripe-js';
+import type { Stripe, StripeError } from '@stripe/stripe-js';
+import { loadStripe } from '@stripe/stripe-js';
 
 // Singleton pattern for Stripe instance
 let stripePromise: Promise<Stripe | null> | null = null;

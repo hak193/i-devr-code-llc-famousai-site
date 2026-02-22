@@ -1,12 +1,12 @@
 import { useEditorStore } from '@/lib/store';
 import { supabase } from '@/lib/supabase';
 import {
-    Copy,
-    Loader2,
-    Play,
-    Plus,
-    Save,
-    Variable
+  Copy,
+  Loader2,
+  Play,
+  Plus,
+  Save,
+  Variable
 } from 'lucide-react';
 import React, { useCallback, useEffect, useRef, useState } from 'react';
 
@@ -21,7 +21,7 @@ interface PromptEditorProps {
   onSave?: (content: string, variables: VariableItem[]) => void;
 }
 
-export const PromptEditor: React.FC<PromptEditorProps> = ({ initialContent = '', onSave }) => {
+export const PromptEditor = ({ initialContent = '', onSave }: PromptEditorProps) => {
   const [content, setContent] = useState(initialContent);
   const [variables, setVariables] = useState<VariableItem[]>([]);
   const [showVariableMenu, setShowVariableMenu] = useState(false);
@@ -48,7 +48,7 @@ export const PromptEditor: React.FC<PromptEditorProps> = ({ initialContent = '',
   }, [content]);
 
   // Handle keyboard shortcuts
-  const handleKeyDown = useCallback((e: React.KeyboardEvent<HTMLTextAreaElement>) => {
+  const handleKeyDown = useCallback((e: React.KeyboardEvent<HTMLTextAreaElement>): void => {
     if (e.key === '{' && !e.shiftKey) {
       // Check if previous char is also {
       const pos = e.currentTarget.selectionStart;
@@ -221,15 +221,14 @@ export const PromptEditor: React.FC<PromptEditorProps> = ({ initialContent = '',
             onChange={(e) => setContent(e.target.value)}
             onKeyDown={handleKeyDown}
             placeholder="Write your prompt here...&#10;&#10;Use {{variable_name}} to create dynamic variables.&#10;Type {{ to see suggestions."
-            className="w-full h-full p-4 bg-zinc-900 border border-t-0 border-zinc-700 rounded-b-xl text-white font-mono text-sm resize-none focus:outline-none focus:ring-1 focus:ring-purple-500/50"
-            style={{ minHeight: '300px' }}
+            className="w-full h-full p-4 bg-zinc-900 border border-t-0 border-zinc-700 rounded-b-xl text-white font-mono text-sm resize-none focus:outline-none focus:ring-1 focus:ring-purple-500/50 min-h-[300px]"
           />
 
           {/* Variable Menu */}
           {showVariableMenu && (
             <div
               className="fixed z-50 w-64 bg-zinc-800 border border-zinc-700 rounded-lg shadow-xl overflow-hidden"
-              style={{ top: menuPosition.top, left: menuPosition.left }}
+              style={menuPosition.top !== 0 ? { top: menuPosition.top, left: menuPosition.left } : undefined}
             >
               <div className="p-2 border-b border-zinc-700">
                 <p className="text-xs text-zinc-400">Insert Variable</p>

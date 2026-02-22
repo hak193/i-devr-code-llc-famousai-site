@@ -31,7 +31,7 @@ const categoryLabels: Record<ProductCategory, string> = {
   cursor_rule: 'Cursor Rule'
 };
 
-export const ProductCard: React.FC<ProductCardProps> = ({ product, onViewDetails }) => {
+export const ProductCard = ({ product, onViewDetails }: ProductCardProps) => {
   const { addItem, openCart } = useCartStore();
   const openModal = useUIStore((state) => state.openModal);
   const { toast } = useToast();

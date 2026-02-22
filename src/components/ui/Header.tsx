@@ -1,15 +1,15 @@
 import { useCartStore } from '@/lib/cart-store';
 import { useFilterStore, useUIStore } from '@/lib/store';
 import {
-    LayoutDashboard,
-    LogIn,
-    Menu,
-    Search,
-    ShoppingCart,
-    Sparkles,
-    Store,
-    Terminal,
-    X
+  LayoutDashboard,
+  LogIn,
+  Menu,
+  Search,
+  ShoppingCart,
+  Sparkles,
+  Store,
+  Terminal,
+  X
 } from 'lucide-react';
 import React, { useState } from 'react';
 
@@ -17,7 +17,7 @@ interface HeaderProps {
   onOpenAuth: () => void;
 }
 
-export const Header: React.FC<HeaderProps> = ({ onOpenAuth }) => {
+export const Header = ({ onOpenAuth }: HeaderProps) => {
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
   const [searchFocused, setSearchFocused] = useState(false);
   const { getTotalItems, openCart } = useCartStore();
@@ -26,11 +26,12 @@ export const Header: React.FC<HeaderProps> = ({ onOpenAuth }) => {
   
   const itemCount = getTotalItems();
 
-  const navItems = [
+  type NavItem = { id: 'store' | 'workbench' | 'dashboard'; label: string; icon: React.ElementType };
+  const navItems: NavItem[] = [
     { id: 'store', label: 'Store', icon: Store },
     { id: 'workbench', label: 'Workbench', icon: Terminal },
     { id: 'dashboard', label: 'Dashboard', icon: LayoutDashboard }
-  ] as const;
+  ];
 
   return (
     <header className="sticky top-0 z-40 bg-zinc-950/80 backdrop-blur-xl border-b border-zinc-800">

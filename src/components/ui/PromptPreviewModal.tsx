@@ -2,7 +2,7 @@ import { useCartStore } from '@/lib/store';
 import { supabase } from '@/lib/supabase';
 import type { Product } from '@/types';
 import { Copy, Loader2, Play, ShoppingCart, Sparkles, X } from 'lucide-react';
-import React, { useState } from 'react';
+import { useState } from 'react';
 
 interface PromptPreviewModalProps {
   isOpen: boolean;
@@ -10,12 +10,13 @@ interface PromptPreviewModalProps {
   product: Product | null;
 }
 
-export const PromptPreviewModal: React.FC<PromptPreviewModalProps> = ({
+export const PromptPreviewModal = ({
   isOpen,
   onClose,
   product
-}) => {
-  const [variables, setVariables] = useState<Record<string, string>>({});
+}: PromptPreviewModalProps) => {
+  type VariableMap = Record<string, string>;
+  const [variables, setVariables] = useState<VariableMap>({});
   const [output, setOutput] = useState('');
   const [isRunning, setIsRunning] = useState(false);
   const [hasRun, setHasRun] = useState(false);

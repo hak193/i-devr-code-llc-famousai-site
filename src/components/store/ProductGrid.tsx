@@ -5,9 +5,9 @@ import { useFilterStore } from '@/lib/store';
 import { supabase } from '@/lib/supabase';
 import type { Product } from '@/types';
 import { Filter, Loader2, Package } from 'lucide-react';
-import React, { useEffect, useMemo, useState } from 'react';
+import { useEffect, useMemo, useState } from 'react';
 
-export const ProductGrid: React.FC = () => {
+export const ProductGrid = () => {
   const [products, setProducts] = useState<Product[]>([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
@@ -79,16 +79,16 @@ export const ProductGrid: React.FC = () => {
 
     // Price filter
     if (filters.minPrice !== undefined) {
-      result = result.filter((p) => p.price_cents >= filters.minPrice!);
+      result = result.filter((p) => p.price_cents >= (filters.minPrice ?? 0));
     }
     if (filters.maxPrice !== undefined) {
-      result = result.filter((p) => p.price_cents <= filters.maxPrice!);
+      result = result.filter((p) => p.price_cents <= (filters.maxPrice ?? Infinity));
     }
 
     // Tags filter
     if (filters.tags && filters.tags.length > 0) {
       result = result.filter((p) =>
-        filters.tags!.some((tag) => p.tags?.includes(tag))
+        (filters.tags ?? []).some((tag) => p.tags?.includes(tag))
       );
     }
 

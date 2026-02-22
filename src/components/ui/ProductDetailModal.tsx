@@ -37,13 +37,13 @@ const categoryLabels: Record<ProductCategory, string> = {
   cursor_rule: 'Cursor Rule'
 };
 
-export const ProductDetailModal: React.FC<ProductDetailModalProps> = ({
+export const ProductDetailModal = ({
   isOpen,
   onClose,
   product,
   recommendedProducts = [],
   onProductClick
-}) => {
+}: ProductDetailModalProps) => {
   const addItem = useCartStore((state) => state.addItem);
   const scrollRef = React.useRef<HTMLDivElement>(null);
 
