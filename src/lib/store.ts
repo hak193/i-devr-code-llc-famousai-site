@@ -142,13 +142,13 @@ export const useUIStore = create<UIStore>((set) => ({
 interface EditorStore {
   currentPromptId: string | null;
   content: string;
-  variables: Record<string, string>;
+  variables: { [key: string]: string };
   isRunning: boolean;
   output: string;
   setCurrentPromptId: (id: string | null) => void;
   setContent: (content: string) => void;
   setVariable: (name: string, value: string) => void;
-  setVariables: (variables: Record<string, string>) => void;
+  setVariables: (variables: { [key: string]: string }) => void;
   setIsRunning: (running: boolean) => void;
   setOutput: (output: string) => void;
   appendOutput: (text: string) => void;

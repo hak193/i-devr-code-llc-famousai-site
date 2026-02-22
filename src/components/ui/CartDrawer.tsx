@@ -1,13 +1,12 @@
 import { useCartStore, useUIStore } from '@/lib/store';
 import { CreditCard, Minus, Plus, ShoppingBag, Trash2, X } from 'lucide-react';
-import React from 'react';
 
 interface CartDrawerProps {
   isOpen: boolean;
   onClose: () => void;
 }
 
-export const CartDrawer: React.FC<CartDrawerProps> = ({ isOpen, onClose }) => {
+export const CartDrawer = ({ isOpen, onClose }: CartDrawerProps) => {
   const { items, removeItem, updateQuantity, getTotalPrice, getTotalItems, clearCart } = useCartStore();
   const openModal = useUIStore((state) => state.openModal);
 
@@ -51,6 +50,7 @@ export const CartDrawer: React.FC<CartDrawerProps> = ({ isOpen, onClose }) => {
           <button
             onClick={onClose}
             className="p-2 hover:bg-zinc-800 rounded-lg transition-colors"
+            title="Close cart"
           >
             <X className="w-5 h-5 text-zinc-400" />
           </button>
@@ -95,6 +95,7 @@ export const CartDrawer: React.FC<CartDrawerProps> = ({ isOpen, onClose }) => {
                         <button
                           onClick={() => updateQuantity(item.product.id, item.quantity - 1)}
                           className="p-1 rounded bg-zinc-700 hover:bg-zinc-600 transition-colors"
+                          title="Decrease quantity"
                         >
                           <Minus className="w-3 h-3 text-white" />
                         </button>
@@ -104,6 +105,7 @@ export const CartDrawer: React.FC<CartDrawerProps> = ({ isOpen, onClose }) => {
                         <button
                           onClick={() => updateQuantity(item.product.id, item.quantity + 1)}
                           className="p-1 rounded bg-zinc-700 hover:bg-zinc-600 transition-colors"
+                          title="Increase quantity"
                         >
                           <Plus className="w-3 h-3 text-white" />
                         </button>
@@ -118,6 +120,7 @@ export const CartDrawer: React.FC<CartDrawerProps> = ({ isOpen, onClose }) => {
                   <button
                     onClick={() => removeItem(item.product.id)}
                     className="p-1.5 h-fit rounded hover:bg-red-500/20 text-zinc-500 hover:text-red-400 transition-colors"
+                    title="Remove item"
                   >
                     <Trash2 className="w-4 h-4" />
                   </button>

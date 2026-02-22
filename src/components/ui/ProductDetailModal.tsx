@@ -31,14 +31,14 @@ interface ProductDetailModalProps {
   onProductClick?: (product: Product) => void;
 }
 
-const categoryIcons: Record<ProductCategory, React.ReactNode> = {
+const categoryIcons: { [key in ProductCategory]: React.ReactNode } = {
   saas_starter: <Rocket className="w-5 h-5" />,
   prompt: <Sparkles className="w-5 h-5" />,
   ui_kit: <Palette className="w-5 h-5" />,
   cursor_rule: <Code2 className="w-5 h-5" />
 };
 
-const categoryLabels: Record<ProductCategory, string> = {
+const categoryLabels: { [key in ProductCategory]: string } = {
   saas_starter: 'SaaS Starter',
   prompt: 'AI Prompt',
   ui_kit: 'UI Kit',

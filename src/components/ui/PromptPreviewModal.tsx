@@ -15,7 +15,7 @@ export const PromptPreviewModal = ({
   onClose,
   product
 }: PromptPreviewModalProps) => {
-  type VariableMap = Record<string, string>;
+  type VariableMap = { [key: string]: string };
   const [variables, setVariables] = useState<VariableMap>({});
   const [output, setOutput] = useState('');
   const [isRunning, setIsRunning] = useState(false);

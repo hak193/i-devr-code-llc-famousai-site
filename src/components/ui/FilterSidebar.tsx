@@ -1,8 +1,8 @@
-import React from 'react';
-import { X, Filter, Rocket, Sparkles, Palette, Code2 } from 'lucide-react';
+import { useFilterStore } from '@/lib/store';
 import type { ProductCategory } from '@/types';
 import { CATEGORY_INFO } from '@/types';
-import { useFilterStore } from '@/lib/store';
+import { Code2, Filter, Palette, Rocket, Sparkles, X } from 'lucide-react';
+import React from 'react';
 
 interface FilterSidebarProps {
   isOpen: boolean;
@@ -10,14 +10,14 @@ interface FilterSidebarProps {
   allTags: string[];
 }
 
-const categoryIcons: Record<ProductCategory, React.ReactNode> = {
+const categoryIcons: { [key in ProductCategory]: React.ReactNode } = {
   saas_starter: <Rocket className="w-4 h-4" />,
   prompt: <Sparkles className="w-4 h-4" />,
   ui_kit: <Palette className="w-4 h-4" />,
   cursor_rule: <Code2 className="w-4 h-4" />
 };
 
-export const FilterSidebar: React.FC<FilterSidebarProps> = ({ isOpen, onClose, allTags }) => {
+export const FilterSidebar = ({ isOpen, onClose, allTags }: FilterSidebarProps) => {
   const { filters, setFilters, resetFilters } = useFilterStore();
 
   const priceRanges = [
@@ -81,6 +81,7 @@ export const FilterSidebar: React.FC<FilterSidebarProps> = ({ isOpen, onClose, a
               <button
                 onClick={onClose}
                 className="lg:hidden p-1 hover:bg-zinc-800 rounded"
+                title="Close filters"
               >
                 <X className="w-5 h-5 text-zinc-400" />
               </button>
@@ -148,6 +149,7 @@ export const FilterSidebar: React.FC<FilterSidebarProps> = ({ isOpen, onClose, a
               value={filters.sortBy || 'popular'}
               onChange={(e) => handleSortChange(e.target.value as typeof filters.sortBy)}
               className="w-full bg-zinc-800 border border-zinc-700 rounded-lg px-3 py-2 text-sm text-white focus:outline-none focus:border-purple-500"
+              title="Sort products by"
             >
               <option value="popular">Most Popular</option>
               <option value="newest">Newest First</option>

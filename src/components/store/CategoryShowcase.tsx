@@ -1,17 +1,17 @@
-import React from 'react';
-import { Rocket, Sparkles, Palette, Code2, ArrowRight } from 'lucide-react';
+import { useFilterStore } from '@/lib/store';
 import type { ProductCategory } from '@/types';
 import { CATEGORY_INFO } from '@/types';
-import { useFilterStore } from '@/lib/store';
+import { ArrowRight, Code2, Palette, Rocket, Sparkles } from 'lucide-react';
+import React from 'react';
 
-const categoryIcons: Record<ProductCategory, React.ReactNode> = {
+const categoryIcons: { [key in ProductCategory]: React.ReactNode } = {
   saas_starter: <Rocket className="w-8 h-8" />,
   prompt: <Sparkles className="w-8 h-8" />,
   ui_kit: <Palette className="w-8 h-8" />,
   cursor_rule: <Code2 className="w-8 h-8" />
 };
 
-export const CategoryShowcase: React.FC = () => {
+export const CategoryShowcase = () => {
   const setFilters = useFilterStore((state) => state.setFilters);
 
   const handleCategoryClick = (category: ProductCategory) => {

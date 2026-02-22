@@ -89,7 +89,7 @@ export interface Prompt {
   user_id: string;
   title: string;
   description?: string;
-  content_json: Record<string, unknown>;
+  content_json: { [key: string]: unknown };
   compiled_content?: string;
   variables: PromptVariable[];
   is_public: boolean;
@@ -106,7 +106,7 @@ export interface PromptVersion {
   id: string;
   prompt_id: string;
   version_number: number;
-  content_json: Record<string, unknown>;
+  content_json: { [key: string]: unknown };
   compiled_content?: string;
   variables: PromptVariable[];
   change_notes?: string;
@@ -163,7 +163,7 @@ export interface ModalState {
 }
 
 // Category metadata
-export const CATEGORY_INFO: Record<ProductCategory, { label: string; icon: string; description: string; color: string }> = {
+export const CATEGORY_INFO: { [key in ProductCategory]: { label: string; icon: string; description: string; color: string } } = {
   saas_starter: {
     label: 'SaaS Starters',
     icon: 'Rocket',

@@ -20,21 +20,21 @@ interface ProductCardProps {
   onViewDetails?: (product: Product) => void;
 }
 
-const categoryIcons: Record<ProductCategory, React.ReactNode> = {
+const categoryIcons: { [key in ProductCategory]: React.ReactNode } = {
   saas_starter: <Rocket className="w-4 h-4" />,
   prompt: <Sparkles className="w-4 h-4" />,
   ui_kit: <Palette className="w-4 h-4" />,
   cursor_rule: <Code2 className="w-4 h-4" />
 };
 
-const categoryColors: Record<ProductCategory, string> = {
+const categoryColors: { [key in ProductCategory]: string } = {
   saas_starter: 'from-purple-500 to-pink-500',
   prompt: 'from-cyan-500 to-blue-500',
   ui_kit: 'from-green-500 to-emerald-500',
   cursor_rule: 'from-orange-500 to-yellow-500'
 };
 
-const categoryLabels: Record<ProductCategory, string> = {
+const categoryLabels: { [key in ProductCategory]: string } = {
   saas_starter: 'SaaS Starter',
   prompt: 'AI Prompt',
   ui_kit: 'UI Kit',
