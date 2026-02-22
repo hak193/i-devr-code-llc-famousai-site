@@ -1,64 +1,94 @@
+import type { CartItem, LicenseType, ModalState, Product, ProductFilters } from '@/types';
 import { create } from 'zustand';
 import { persist } from 'zustand/middleware';
-import type { CartItem, Product, LicenseType, ProductFilters, ModalState } from '@/types';
 
 // Cart Store
 interface CartStore {
   items: CartItem[];
+  isOpen: boolean;
   addItem: (product: Product, licenseType?: LicenseType) => void;
   removeItem: (productId: string) => void;
   updateQuantity: (productId: string, quantity: number) => void;
+  updateLicenseType: (productId: string, licenseType: LicenseType) => void;
   clearCart: () => void;
-  getTotal: () => number;
-  getItemCount: () => number;
+  openCart: () => void;
+  closeCart: () => void;
+  toggleCart: () => void;
+  getTotalItems: () => number;
+  getTotalPrice: () => number;
+  getItemCount: (productId: string) => number;
 }
 
 export const useCartStore = create<CartStore>()(
   persist(
     (set, get) => ({
       items: [],
+      isOpen: false,
+
       addItem: (product, licenseType = 'personal') => {
         const items = get().items;
-        const existingItem = items.find(item => item.product.id === product.id);
-        
+        const existingItem = items.find(
+          (item) => item.product.id === product.id && item.license_type === licenseType
+        );
+
         if (existingItem) {
           set({
-            items: items.map(item =>
-              item.product.id === product.id
+            items: items.map((item) =>
+              item.product.id === product.id && item.license_type === licenseType
                 ? { ...item, quantity: item.quantity + 1 }
                 : item
-            )
+            ),
           });
         } else {
           set({ items: [...items, { product, quantity: 1, license_type: licenseType }] });
         }
       },
+
       removeItem: (productId) => {
-        set({ items: get().items.filter(item => item.product.id !== productId) });
+        set({ items: get().items.filter((item) => item.product.id !== productId) });
       },
+
       updateQuantity: (productId, quantity) => {
         if (quantity <= 0) {
           get().removeItem(productId);
           return;
         }
         set({
-          items: get().items.map(item =>
+          items: get().items.map((item) =>
             item.product.id === productId ? { ...item, quantity } : item
-          )
+          ),
         });
       },
-      clearCart: () => set({ items: [] }),
-      getTotal: () => {
-        return get().items.reduce(
-          (total, item) => total + item.product.price_cents * item.quantity,
-          0
-        );
+
+      updateLicenseType: (productId, licenseType) => {
+        set({
+          items: get().items.map((item) =>
+            item.product.id === productId ? { ...item, license_type: licenseType } : item
+          ),
+        });
       },
-      getItemCount: () => {
-        return get().items.reduce((count, item) => count + item.quantity, 0);
-      }
+
+      clearCart: () => set({ items: [] }),
+      openCart: () => set({ isOpen: true }),
+      closeCart: () => set({ isOpen: false }),
+      toggleCart: () => set({ isOpen: !get().isOpen }),
+
+      getTotalItems: () => {
+        return get().items.reduce((total, item) => total + item.quantity, 0);
+      },
+
+      getTotalPrice: () => {
+        return get().items.reduce((total, item) => {
+          return total + item.product.price_cents * item.quantity;
+        }, 0);
+      },
+
+      getItemCount: (productId) => {
+        const item = get().items.find((i) => i.product.id === productId);
+        return item ? item.quantity : 0;
+      },
     }),
-    { name: 'idevr-cart' }
+    { name: 'idevr-cart-storage' }
   )
 );
 

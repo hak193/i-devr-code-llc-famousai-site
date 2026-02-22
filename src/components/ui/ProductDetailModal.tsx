@@ -1,3 +1,12 @@
+import { Button } from '@/components/ui/button';
+import {
+  Dialog,
+  DialogContent,
+  DialogDescription,
+  DialogFooter,
+  DialogHeader,
+  DialogTitle,
+} from '@/components/ui/dialog';
 import { useCartStore } from '@/lib/store';
 import type { Product, ProductCategory } from '@/types';
 import {
@@ -10,7 +19,6 @@ import {
   Rocket,
   Sparkles,
   Star,
-  X
 } from 'lucide-react';
 import React from 'react';
 import { ProductCard } from './ProductCard';
@@ -53,7 +61,7 @@ export const ProductDetailModal = ({
     }
   }, [product, isOpen]);
 
-  if (!isOpen || !product) return null;
+  if (!product) return null;
 
   const formatPrice = (cents: number) => {
     return new Intl.NumberFormat('en-US', {
@@ -68,38 +76,25 @@ export const ProductDetailModal = ({
   };
 
   const handleCheckout = () => {
-    // In a real app, this would redirect to Stripe Checkout or similar
     if (product.lemon_squeezy_variant_id) {
         window.open(`https://store.lemonsqueezy.com/checkout/buy/${product.lemon_squeezy_variant_id}?embed=1`, '_blank');
     } else {
-        // Fallback or demo behavior
         alert("Redirecting to secure checkout...");
     }
   };
 
   return (
-    <div className="fixed inset-0 z-50 flex items-center justify-center p-4">
-      {/* Backdrop */}
-      <div
-        className="absolute inset-0 bg-black/80 backdrop-blur-sm"
-        onClick={onClose}
-      />
-
-      {/* Modal */}
-      <div className="relative w-full max-w-5xl max-h-[90vh] bg-zinc-900 border border-zinc-800 rounded-2xl shadow-2xl overflow-hidden flex flex-col">
-        {/* Close Button */}
-        <button
-          onClick={onClose}
-          className="absolute top-4 right-4 z-10 p-2 bg-zinc-800/80 hover:bg-zinc-700 rounded-lg transition-colors"
-          aria-label="Close modal"
-        >
-          <X className="w-5 h-5 text-zinc-400" />
-        </button>
+    <Dialog open={isOpen} onOpenChange={(open) => !open && onClose()}>
+      <DialogContent className="max-w-5xl p-0 overflow-hidden bg-zinc-900 border-zinc-800 rounded-2xl shadow-2xl h-[90vh] flex flex-col">
+        <DialogHeader className="sr-only">
+          <DialogTitle>{product.name}</DialogTitle>
+          <DialogDescription>{product.description}</DialogDescription>
+        </DialogHeader>
 
         <div ref={scrollRef} className="flex-1 overflow-y-auto">
-          <div className="grid grid-cols-1 lg:grid-cols-2 gap-0 lg:gap-8">
+          <div className="grid grid-cols-1 lg:grid-cols-2 gap-0">
             {/* Left - Image */}
-            <div className="relative aspect-square lg:aspect-auto lg:h-[500px]">
+            <div className="relative aspect-square lg:aspect-auto lg:h-full min-h-[400px]">
               <img
                 src={product.image_url || 'https://via.placeholder.com/600'}
                 alt={product.name}
@@ -109,50 +104,56 @@ export const ProductDetailModal = ({
             </div>
 
             {/* Right - Details */}
-            <div className="p-6 lg:p-8 lg:pr-12">
+            <div className="p-6 lg:p-10">
               {/* Category Badge */}
-              <div className="flex items-center gap-2 mb-4">
-                <span className="flex items-center gap-1.5 px-3 py-1 rounded-full bg-purple-600/20 text-purple-400 text-sm font-medium">
+              <div className="flex items-center gap-2 mb-6">
+                <span className="flex items-center gap-1.5 px-3 py-1 rounded-full bg-purple-600/10 text-purple-400 text-sm font-semibold border border-purple-500/20">
                   {categoryIcons[product.category]}
                   {categoryLabels[product.category]}
                 </span>
                 {product.is_featured && (
-                  <span className="px-2.5 py-1 rounded-full bg-yellow-500/20 text-yellow-400 text-xs font-bold">
+                  <span className="px-3 py-1 rounded-full bg-yellow-400 text-zinc-950 text-xs font-black uppercase tracking-wider">
                     Featured
                   </span>
                 )}
               </div>
 
               {/* Title */}
-              <h2 className="text-2xl lg:text-3xl font-bold text-white mb-3">
+              <h2 className="text-3xl lg:text-4xl font-black text-white mb-4 tracking-tight">
                 {product.name}
               </h2>
 
               {/* Stats */}
-              <div className="flex items-center gap-4 mb-4 text-sm text-zinc-400">
-                <span className="flex items-center gap-1">
+              <div className="flex items-center gap-5 mb-6 text-sm text-zinc-400">
+                <span className="flex items-center gap-1.5">
                   <Star className="w-4 h-4 text-yellow-500 fill-yellow-500" />
-                  {product.rating_average.toFixed(1)} ({product.rating_count} reviews)
+                  <span className="text-zinc-200 font-bold">{product.rating_average.toFixed(1)}</span>
+                  <span className="text-zinc-500">({product.rating_count} reviews)</span>
                 </span>
-                <span className="flex items-center gap-1">
-                  <Download className="w-4 h-4" />
-                  {product.downloads_count} downloads
+                <span className="flex items-center gap-1.5">
+                  <Download className="w-4 h-4 text-zinc-500" />
+                  <span className="text-zinc-200 font-bold">{product.downloads_count}</span>
+                  <span className="text-zinc-500">downloads</span>
                 </span>
               </div>
 
               {/* Description */}
-              <p className="text-zinc-400 mb-6 leading-relaxed">
-                {product.long_description || product.description}
-              </p>
+              <div className="prose prose-invert prose-sm max-w-none mb-8">
+                <p className="text-zinc-400 text-base leading-relaxed">
+                  {product.long_description || product.description}
+                </p>
+              </div>
 
               {/* Features */}
               {product.features && product.features.length > 0 && (
-                <div className="mb-6">
-                  <h3 className="text-sm font-medium text-zinc-300 mb-3">What's Included</h3>
-                  <ul className="space-y-2">
+                <div className="mb-8">
+                  <h3 className="text-xs font-black uppercase tracking-widest text-zinc-500 mb-4">What's Included</h3>
+                  <ul className="grid grid-cols-1 sm:grid-cols-2 gap-3">
                     {product.features.map((feature, index) => (
-                      <li key={index} className="flex items-center gap-2 text-sm text-zinc-400">
-                        <Check className="w-4 h-4 text-green-500 shrink-0" />
+                      <li key={index} className="flex items-start gap-3 text-sm text-zinc-400">
+                        <div className="mt-1 bg-green-500/10 p-0.5 rounded">
+                          <Check className="w-3 h-3 text-green-500 shrink-0" />
+                        </div>
                         {feature}
                       </li>
                     ))}
@@ -162,13 +163,13 @@ export const ProductDetailModal = ({
 
               {/* Tech Stack */}
               {product.tech_stack && product.tech_stack.length > 0 && (
-                <div className="mb-6">
-                  <h3 className="text-sm font-medium text-zinc-300 mb-3">Tech Stack</h3>
+                <div className="mb-8">
+                  <h3 className="text-xs font-black uppercase tracking-widest text-zinc-500 mb-4">Built With</h3>
                   <div className="flex flex-wrap gap-2">
                     {product.tech_stack.map((tech) => (
                       <span
                         key={tech}
-                        className="px-2.5 py-1 rounded-md bg-zinc-800 text-zinc-400 text-xs"
+                        className="px-3 py-1.5 rounded-lg bg-zinc-800/50 text-zinc-300 text-xs font-medium border border-zinc-700/50"
                       >
                         {tech}
                       </span>
@@ -177,42 +178,30 @@ export const ProductDetailModal = ({
                 </div>
               )}
 
-              {/* Tags */}
-              {product.tags && product.tags.length > 0 && (
-                <div className="mb-6">
-                  <h3 className="text-sm font-medium text-zinc-300 mb-3">Tags</h3>
-                  <div className="flex flex-wrap gap-2">
-                    {product.tags.map((tag) => (
-                      <span
-                        key={tag}
-                        className="px-2.5 py-1 rounded-md bg-purple-600/10 text-purple-400 text-xs"
-                      >
-                        #{tag}
-                      </span>
-                    ))}
-                  </div>
-                </div>
-              )}
-
               {/* Demo Link */}
               {product.demo_url && (
-                <a
-                  href={product.demo_url}
-                  target="_blank"
-                  rel="noopener noreferrer"
-                  className="inline-flex items-center gap-2 text-purple-400 hover:text-purple-300 text-sm mb-6"
+                <Button 
+                  asChild 
+                  variant="outline" 
+                  className="w-full mb-8 border-zinc-700 bg-zinc-800/30 hover:bg-zinc-800 hover:text-white"
                 >
-                  <ExternalLink className="w-4 h-4" />
-                  View Live Demo
-                </a>
+                  <a
+                    href={product.demo_url}
+                    target="_blank"
+                    rel="noopener noreferrer"
+                  >
+                    <ExternalLink className="w-4 h-4 mr-2" />
+                    Preview Live Demo
+                  </a>
+                </Button>
               )}
             </div>
           </div>
 
           {/* Recommended Products */}
           {recommendedProducts.length > 0 && (
-            <div className="p-6 lg:p-8 border-t border-zinc-800">
-               <h3 className="text-xl font-bold text-white mb-6">You Might Also Like</h3>
+            <div className="p-6 lg:p-10 border-t border-zinc-800 bg-zinc-950/20">
+               <h3 className="text-2xl font-black text-white mb-8">Related Products</h3>
                <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6">
                  {recommendedProducts.map((p) => (
                    <ProductCard 
@@ -227,37 +216,38 @@ export const ProductDetailModal = ({
         </div>
 
         {/* Footer - Price & CTA */}
-        <div className="flex items-center justify-between p-6 border-t border-zinc-800 bg-zinc-900/95 backdrop-blur supports-[backdrop-filter]:bg-zinc-900/50">
-          <div>
+        <DialogFooter className="flex-row items-center justify-between p-6 border-t border-zinc-800 bg-zinc-950/80 backdrop-blur supports-[backdrop-filter]:bg-zinc-950/50">
+          <div className="text-left">
             <div className="flex items-baseline gap-2">
-              <span className="text-3xl font-bold text-white">
+              <span className="text-3xl font-black text-white">
                 {formatPrice(product.price_cents)}
               </span>
               {product.compare_price_cents && product.compare_price_cents > product.price_cents && (
-                <span className="text-lg text-zinc-500 line-through">
+                <span className="text-lg text-zinc-500 line-through decoration-red-500/50">
                   {formatPrice(product.compare_price_cents)}
                 </span>
               )}
             </div>
-            <p className="text-sm text-zinc-500">One-time purchase</p>
+            <p className="text-[10px] uppercase font-bold tracking-widest text-zinc-500">Ownership for life</p>
           </div>
           <div className="flex items-center gap-3">
-            <button
+            <Button
+              variant="secondary"
               onClick={handleAddToCart}
-              className="px-6 py-3 bg-zinc-800 hover:bg-zinc-700 text-white font-medium rounded-lg transition-colors"
+              className="bg-zinc-800 hover:bg-zinc-700 text-white font-bold h-12 px-6"
             >
               Add to Cart
-            </button>
-            <button
+            </Button>
+            <Button
                 onClick={handleCheckout}
-                className="flex items-center gap-2 px-8 py-3 bg-gradient-to-r from-purple-600 to-cyan-600 hover:from-purple-500 hover:to-cyan-500 text-white font-semibold rounded-lg transition-all shadow-lg shadow-purple-500/25"
+                className="bg-gradient-to-r from-purple-600 to-cyan-600 hover:from-purple-500 hover:to-cyan-500 text-white font-black h-12 px-8 shadow-xl shadow-purple-600/20"
             >
-                <CreditCard className="w-5 h-5" />
-                Buy Now
-            </button>
+                <CreditCard className="w-5 h-5 mr-2" />
+                Get Instant Access
+            </Button>
           </div>
-        </div>
-      </div>
-    </div>
+        </DialogFooter>
+      </DialogContent>
+    </Dialog>
   );
 };

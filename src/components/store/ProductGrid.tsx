@@ -4,24 +4,18 @@ import { ProductDetailModal } from '@/components/ui/ProductDetailModal';
 import { useFilterStore } from '@/lib/store';
 import { supabase } from '@/lib/supabase';
 import type { Product } from '@/types';
+import { useQuery } from '@tanstack/react-query';
 import { Filter, Loader2, Package } from 'lucide-react';
-import { useEffect, useMemo, useState } from 'react';
+import { useMemo, useState } from 'react';
 
 export const ProductGrid = () => {
-  const [products, setProducts] = useState<Product[]>([]);
-  const [loading, setLoading] = useState(true);
-  const [error, setError] = useState<string | null>(null);
   const [sidebarOpen, setSidebarOpen] = useState(false);
   const [selectedProduct, setSelectedProduct] = useState<Product | null>(null);
   const { filters } = useFilterStore();
 
-  useEffect(() => {
-    fetchProducts();
-  }, []);
-
-  const fetchProducts = async () => {
-    try {
-      setLoading(true);
+  const { data: products = [], isLoading: loading, error: queryError, refetch: fetchProducts } = useQuery({
+    queryKey: ['products'],
+    queryFn: async () => {
       const { data, error } = await supabase
         .from('products')
         .select('*')
@@ -29,35 +23,24 @@ export const ProductGrid = () => {
         .order('downloads_count', { ascending: false });
 
       if (error) throw error;
-      setProducts(data || []);
-    } catch (err: unknown) {
-      console.error('Error fetching products:', err);
-      let errorMessage = 'An unexpected error occurred';
-      
-      if (err instanceof Error) {
-        errorMessage = err.message;
-        
-        // Provide specific guidance for common errors
-        if (errorMessage.includes('Failed to fetch') || errorMessage.includes('NetworkError')) {
-          errorMessage = `Network Error: Unable to connect to Supabase.\n\nPossible causes:\n• Your Supabase project might be paused (free tier pauses after 7 days of inactivity)\n• Network connectivity issues\n• CORS configuration problems\n\n👉 Check your Supabase dashboard: https://supabase.com/dashboard\n👉 Click "Restore" if your project is paused`;
-        } else if (errorMessage.includes('CORS')) {
-          errorMessage = `CORS Error: Cross-origin request blocked.\n\n👉 Check your Supabase project settings\n👉 Ensure your domain is allowed in API settings`;
-        } else if (errorMessage.includes('Missing Supabase')) {
-          errorMessage = `Configuration Error: ${errorMessage}\n\n👉 Ensure .env file exists with VITE_SUPABASE_URL and VITE_SUPABASE_ANON_KEY\n👉 Restart dev server: npm run dev`;
-        }
-      } else if (typeof err === 'object' && err !== null) {
-        // Safe check for message property
-        const errorObj = err as { message?: unknown };
-        if (typeof errorObj.message === 'string') {
-          errorMessage = errorObj.message;
-        }
-      }
-      
-      setError(errorMessage);
-    } finally {
-      setLoading(false);
+      return data as Product[];
     }
-  };
+  });
+
+  const error = useMemo(() => {
+    if (!queryError) return null;
+    
+    let errorMessage = 'An unexpected error occurred';
+    if (queryError instanceof Error) {
+      errorMessage = queryError.message;
+      if (errorMessage.includes('Failed to fetch') || errorMessage.includes('NetworkError')) {
+        errorMessage = `Network Error: Unable to connect to Supabase.\n\nPossible causes:\n• Your Supabase project might be paused\n• Network connectivity issues\n• CORS configuration problems\n\n👉 Check your Supabase dashboard`;
+      } else if (errorMessage.includes('Missing Supabase')) {
+        errorMessage = `Configuration Error: ${errorMessage}\n\n👉 Ensure .env file exists with VITE_SUPABASE_URL and VITE_SUPABASE_ANON_KEY`;
+      }
+    }
+    return errorMessage;
+  }, [queryError]);
 
   // Extract all unique tags
   const allTags = useMemo(() => {
@@ -159,7 +142,7 @@ export const ProductGrid = () => {
           {error}
         </div>
         <button
-          onClick={fetchProducts}
+          onClick={() => fetchProducts()}
           className="px-4 py-2 bg-purple-600 hover:bg-purple-500 text-white rounded-lg transition-colors"
         >
           Try Again
@@ -209,7 +192,7 @@ export const ProductGrid = () => {
                 </p>
               </div>
             ) : (
-              <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6">
+              <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-6">
                 {filteredProducts.map((product) => (
                   <ProductCard 
                     key={product.id} 

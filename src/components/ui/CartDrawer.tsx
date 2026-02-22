@@ -1,6 +1,6 @@
-import React from 'react';
-import { X, Minus, Plus, Trash2, ShoppingBag, CreditCard } from 'lucide-react';
 import { useCartStore, useUIStore } from '@/lib/store';
+import { CreditCard, Minus, Plus, ShoppingBag, Trash2, X } from 'lucide-react';
+import React from 'react';
 
 interface CartDrawerProps {
   isOpen: boolean;
@@ -8,7 +8,7 @@ interface CartDrawerProps {
 }
 
 export const CartDrawer: React.FC<CartDrawerProps> = ({ isOpen, onClose }) => {
-  const { items, removeItem, updateQuantity, getTotal, clearCart } = useCartStore();
+  const { items, removeItem, updateQuantity, getTotalPrice, getTotalItems, clearCart } = useCartStore();
   const openModal = useUIStore((state) => state.openModal);
 
   const formatPrice = (cents: number) => {
@@ -45,7 +45,7 @@ export const CartDrawer: React.FC<CartDrawerProps> = ({ isOpen, onClose }) => {
             <ShoppingBag className="w-5 h-5 text-purple-500" />
             <span className="font-semibold text-white">Your Cart</span>
             <span className="px-2 py-0.5 rounded-full bg-purple-600/20 text-purple-400 text-xs">
-              {items.length} items
+              {getTotalItems()} items
             </span>
           </div>
           <button
@@ -133,7 +133,7 @@ export const CartDrawer: React.FC<CartDrawerProps> = ({ isOpen, onClose }) => {
             <div className="flex items-center justify-between mb-4">
               <span className="text-zinc-400">Subtotal</span>
               <span className="text-xl font-bold text-white">
-                {formatPrice(getTotal())}
+                {formatPrice(getTotalPrice())}
               </span>
             </div>
             <button

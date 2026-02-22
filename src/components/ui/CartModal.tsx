@@ -1,21 +1,22 @@
 import { Badge } from '@/components/ui/badge';
 import { Button } from '@/components/ui/button';
 import {
-    Select,
-    SelectContent,
-    SelectItem,
-    SelectTrigger,
-    SelectValue,
+  Select,
+  SelectContent,
+  SelectItem,
+  SelectTrigger,
+  SelectValue,
 } from '@/components/ui/select';
 import { Separator } from '@/components/ui/separator';
 import {
-    Sheet,
-    SheetContent,
-    SheetDescription,
-    SheetHeader,
-    SheetTitle,
+  Sheet,
+  SheetContent,
+  SheetDescription,
+  SheetHeader,
+  SheetTitle,
 } from '@/components/ui/sheet';
-import { formatPrice, getLicenseDetails, useCartStore } from '@/lib/cart-store';
+import { formatPrice, getLicenseDetails } from '@/lib/cart-store';
+import { useCartStore } from '@/lib/store';
 import type { LicenseType } from '@/types';
 import { ShoppingCart, Trash2 } from 'lucide-react';
 import React from 'react';

@@ -4,10 +4,8 @@ import React, { useState } from 'react';
 
 // Components
 import { AuthModal } from '@/components/ui/AuthModal';
-import { CartDrawer } from '@/components/ui/CartDrawer';
 import { Footer } from '@/components/ui/Footer';
 import { Header } from '@/components/ui/Header';
-import { ProductDetailModal } from '@/components/ui/ProductDetailModal';
 import { PromptPreviewModal } from '@/components/ui/PromptPreviewModal';
 
 // Views
@@ -20,9 +18,7 @@ import { PromotionalHero } from '@/components/store/PromotionalHero';
 import { WorkbenchView } from '@/components/workbench/WorkbenchView';
 
 const AppLayout: React.FC = () => {
-  const [cartOpen, setCartOpen] = useState(false);
   const [authOpen, setAuthOpen] = useState(false);
-  const [detailProduct, setDetailProduct] = useState<Product | null>(null);
   const { activeView, modal, closeModal } = useUIStore();
 
   // Get the product for prompt preview modal
@@ -31,10 +27,7 @@ const AppLayout: React.FC = () => {
   return (
     <div className="min-h-screen bg-zinc-950 text-white">
       {/* Header */}
-      <Header
-        onOpenCart={() => setCartOpen(true)}
-        onOpenAuth={() => setAuthOpen(true)}
-      />
+      <Header onOpenAuth={() => setAuthOpen(true)} />
 
       {/* Main Content */}
       <main>
@@ -57,17 +50,11 @@ const AppLayout: React.FC = () => {
       {activeView === 'store' && <Footer />}
 
       {/* Modals & Drawers */}
-      <CartDrawer isOpen={cartOpen} onClose={() => setCartOpen(false)} />
       <AuthModal isOpen={authOpen} onClose={() => setAuthOpen(false)} />
       <PromptPreviewModal
         isOpen={modal.type === 'prompt-runner'}
         onClose={closeModal}
         product={previewProduct}
-      />
-      <ProductDetailModal
-        isOpen={detailProduct !== null}
-        onClose={() => setDetailProduct(null)}
-        product={detailProduct}
       />
     </div>
   );

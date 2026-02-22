@@ -1,6 +1,16 @@
+import { Button } from '@/components/ui/button';
+import {
+  Card,
+  CardContent,
+  CardDescription,
+  CardFooter,
+  CardHeader,
+  CardTitle,
+} from '@/components/ui/card';
 import { useToast } from '@/hooks/use-toast';
 import { useCartStore } from '@/lib/cart-store';
 import { useUIStore } from '@/lib/store';
+import { cn } from '@/lib/utils';
 import type { Product, ProductCategory } from '@/types';
 import { Code2, Download, Eye, Palette, Rocket, ShoppingCart, Sparkles, Star } from 'lucide-react';
 import React from 'react';
@@ -32,7 +42,7 @@ const categoryLabels: Record<ProductCategory, string> = {
 };
 
 export const ProductCard = ({ product, onViewDetails }: ProductCardProps) => {
-  const { addItem, openCart } = useCartStore();
+  const { addItem } = useCartStore();
   const openModal = useUIStore((state) => state.openModal);
   const { toast } = useToast();
 
@@ -62,98 +72,108 @@ export const ProductCard = ({ product, onViewDetails }: ProductCardProps) => {
   };
 
   return (
-    <div 
+    <Card 
       onClick={() => onViewDetails?.(product)}
-      className="group relative bg-zinc-900/50 border border-zinc-800 rounded-xl overflow-hidden hover:border-purple-500/50 transition-all duration-300 hover:shadow-lg hover:shadow-purple-500/10 cursor-pointer"
+      className="group relative overflow-hidden bg-zinc-900/50 border-zinc-800 hover:border-purple-500/50 transition-all duration-300 hover:shadow-xl hover:shadow-purple-500/10 cursor-pointer flex flex-col h-full"
     >
-      {/* Image */}
-      <div className="relative aspect-[4/3] overflow-hidden">
+      {/* Image Area */}
+      <div className="relative aspect-[16/10] overflow-hidden">
         <img
-          src={product.image_url || 'https://via.placeholder.com/400x300'}
+          src={product.image_url || 'https://via.placeholder.com/400x250'}
           alt={product.name}
           className="w-full h-full object-cover transition-transform duration-500 group-hover:scale-110"
         />
         
         {/* Gradient Overlay */}
-        <div className="absolute inset-0 bg-gradient-to-t from-zinc-900 via-transparent to-transparent opacity-60" />
+        <div className="absolute inset-0 bg-gradient-to-t from-zinc-950 via-transparent to-transparent opacity-80" />
         
         {/* Category Badge */}
-        <div className={`absolute top-3 left-3 flex items-center gap-1.5 px-2.5 py-1 rounded-full bg-gradient-to-r ${categoryColors[product.category]} text-white text-xs font-medium`}>
+        <div className={cn(
+          "absolute top-3 left-3 flex items-center gap-1.5 px-3 py-1 rounded-full text-white text-[10px] font-bold uppercase tracking-wider bg-gradient-to-r",
+          categoryColors[product.category]
+        )}>
           {categoryIcons[product.category]}
           <span>{categoryLabels[product.category]}</span>
         </div>
 
         {/* Featured Badge */}
         {product.is_featured && (
-          <div className="absolute top-3 right-3 px-2.5 py-1 rounded-full bg-yellow-500/90 text-black text-xs font-bold">
+          <div className="absolute top-3 right-3 px-3 py-1 rounded-full bg-yellow-400 text-zinc-950 text-[10px] font-black uppercase tracking-wider shadow-lg">
             Featured
           </div>
         )}
 
-        {/* Quick Actions */}
-        <div className="absolute bottom-3 right-3 flex gap-2 opacity-0 group-hover:opacity-100 transition-opacity duration-300">
-          <button
+        {/* Floating Quick Actions */}
+        <div className="absolute bottom-3 right-3 flex gap-2 translate-y-2 opacity-0 group-hover:translate-y-0 group-hover:opacity-100 transition-all duration-300">
+          <Button
+            variant="secondary"
+            size="icon"
             onClick={handlePreview}
-            className="p-2 rounded-lg bg-zinc-900/90 hover:bg-zinc-800 text-white transition-colors"
-            title="Preview"
+            className="h-9 w-9 bg-zinc-900/90 hover:bg-zinc-800 border-zinc-700/50"
           >
             <Eye className="w-4 h-4" />
-          </button>
-          <button
+          </Button>
+          <Button
+            size="icon"
             onClick={handleAddToCart}
-            className="p-2 rounded-lg bg-purple-600 hover:bg-purple-500 text-white transition-colors"
-            title="Add to Cart"
+            className="h-9 w-9 bg-purple-600 hover:bg-purple-500 text-white shadow-lg shadow-purple-600/20"
           >
             <ShoppingCart className="w-4 h-4" />
-          </button>
+          </Button>
         </div>
       </div>
 
-      {/* Content */}
-      <div className="p-4">
-        <h3 className="font-semibold text-white text-lg mb-1 line-clamp-1 group-hover:text-purple-400 transition-colors">
-          {product.name}
-        </h3>
-        <p className="text-zinc-400 text-sm mb-3 line-clamp-2">
+      <CardHeader className="p-4 pb-2">
+        <div className="flex justify-between items-start gap-2">
+          <CardTitle className="text-lg font-bold text-white group-hover:text-purple-400 transition-colors line-clamp-1">
+            {product.name}
+          </CardTitle>
+          <div className="text-right shrink-0">
+            <p className="font-bold text-lg text-white">
+              {formatPrice(product.price_cents)}
+            </p>
+          </div>
+        </div>
+        <CardDescription className="text-zinc-400 text-xs line-clamp-2 mt-1">
           {product.description}
-        </p>
+        </CardDescription>
+      </CardHeader>
 
-        {/* Tags */}
-        <div className="flex flex-wrap gap-1.5 mb-3">
+      <CardContent className="p-4 pt-0 flex-grow">
+        <div className="flex flex-wrap gap-1.5 mt-2">
           {product.tags?.slice(0, 3).map((tag) => (
             <span
               key={tag}
-              className="px-2 py-0.5 rounded-md bg-zinc-800 text-zinc-400 text-xs"
+              className="px-2 py-0.5 rounded bg-zinc-800/80 text-zinc-500 text-[10px] font-medium border border-zinc-700/30"
             >
-              {tag}
+              #{tag}
             </span>
           ))}
         </div>
+      </CardContent>
 
-        {/* Stats & Price */}
-        <div className="flex items-center justify-between pt-3 border-t border-zinc-800">
-          <div className="flex items-center gap-3 text-sm text-zinc-500">
+      <CardFooter className="p-4 pt-0 border-t border-zinc-800/50 mt-auto bg-zinc-950/30">
+        <div className="flex items-center justify-between w-full pt-3">
+          <div className="flex items-center gap-4 text-[11px] text-zinc-500">
             <span className="flex items-center gap-1">
-              <Star className="w-3.5 h-3.5 text-yellow-500 fill-yellow-500" />
+              <Star className="w-3 h-3 text-yellow-500 fill-yellow-500" />
               {product.rating_average.toFixed(1)}
             </span>
             <span className="flex items-center gap-1">
-              <Download className="w-3.5 h-3.5" />
+              <Download className="w-3 h-3" />
               {product.downloads_count}
             </span>
           </div>
-          <div className="text-right">
-            {product.compare_price_cents && product.compare_price_cents > product.price_cents && (
-              <span className="text-xs text-zinc-500 line-through mr-2">
-                {formatPrice(product.compare_price_cents)}
-              </span>
-            )}
-            <span className="font-bold text-white">
-              {formatPrice(product.price_cents)}
-            </span>
-          </div>
+          <Button 
+            variant="ghost" 
+            size="sm" 
+            className="h-7 text-xs text-purple-400 hover:text-purple-300 hover:bg-purple-400/10 p-0"
+            onClick={() => onViewDetails?.(product)}
+          >
+            View Details
+          </Button>
         </div>
-      </div>
-    </div>
+      </CardFooter>
+    </Card>
   );
 };

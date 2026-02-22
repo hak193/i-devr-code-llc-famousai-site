@@ -1,5 +1,4 @@
-import { useCartStore } from '@/lib/cart-store';
-import { useFilterStore, useUIStore } from '@/lib/store';
+import { useCartStore, useFilterStore, useUIStore } from '@/lib/store';
 import {
   LayoutDashboard,
   LogIn,
